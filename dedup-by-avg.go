@@ -1,10 +1,56 @@
+// This program parsed my spotty weight data and then outputs it in json for
+// the fitbit api. It also converts the date to yyyy-mm-dd format. Instead of
+// writing to a file, I print on stdout and write stdout to a file.
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"strconv"
 	"strings"
 )
+
+// https://dev.fitbit.com/build/reference/web-api/body/#log-weight
+type weightData struct {
+	Date   string  `json:"date"`
+	Weight float64 `json:"weight"`
+}
+
+func main() {
+	// value convert float to int to avoid float math
+	const multiplier = 100.0
+	weightMap := make(map[string]int)
+	weightSlice := strings.Split(weight, "\n")
+	keys := []string{}
+	for _, wl := range weightSlice {
+		strs := strings.Split(wl, " ")
+		d, wstr := strs[0], strs[1]
+		wfl, _ := strconv.ParseFloat(wstr, 64)
+		wfl = wfl * multiplier
+		w := int(wfl)
+		cw, exists := weightMap[d]
+		if exists {
+			//fmt.Println()
+			//fmt.Printf("%v %v\n", w, cw)
+			w = (cw + w) / 2
+			//fmt.Println(w)
+		} else {
+			keys = append(keys, d)
+		}
+		weightMap[d] = w
+	}
+
+	weightDataSlice := []weightData{}
+	for _, d := range keys {
+		w := float64(weightMap[d]) / multiplier
+		//fmt.Printf("%v %.1f\n", d, w)
+		wd := weightData{Date: d, Weight: w}
+		j, _ := json.Marshal(wd)
+		weightDataSlice = append(weightDataSlice, wd)
+		fmt.Println(string(j))
+	}
+
+}
 
 // Sadly my weight data from joes goals did sometimes had off by one errors in
 // the dates. Probably related to UTC issues. Unfortunately the export only has
@@ -342,32 +388,3 @@ const weight = ` 12/12/2013 166.6
 10/12/2015 152.8
 10/16/2015 152.8
 10/16/2015 151.8`
-
-func main() {
-	// value convert float to int to avoid float math
-	const multiplier = 100.0
-	weightMap := make(map[string]int)
-	weightSlice := strings.Split(weight, "\n")
-	keys := []string{}
-	for _, wl := range weightSlice {
-		strs := strings.Split(wl, " ")
-		d, wstr := strs[0], strs[1]
-		wfl, _ := strconv.ParseFloat(wstr, 64)
-		wfl = wfl * multiplier
-		w := int(wfl)
-		cw, exists := weightMap[d]
-		if exists {
-			//fmt.Println()
-			//fmt.Printf("%v %v\n", w, cw)
-			w = (cw + w) / 2
-			//fmt.Println(w)
-		} else {
-			keys = append(keys, d)
-		}
-		weightMap[d] = w
-	}
-
-	for _, d := range keys {
-		fmt.Printf("%v %.1f\n", d, float64(weightMap[d])/multiplier)
-	}
-}
