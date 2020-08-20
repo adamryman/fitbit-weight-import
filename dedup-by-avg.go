@@ -45,14 +45,15 @@ func main() {
 	weightDataSlice := []weightData{}
 	for _, d := range keys {
 		w := float64(weightMap[d]) / multiplier
-		//fmt.Printf("%v %.1f\n", d, w)
 		date, _ := time.Parse("01/02/2006", d)
 		dStr := date.Format("2006-01-02")
 
+		fmt.Printf("%v %.1f\n", dStr, w)
 		wd := weightData{Date: dStr, Weight: math.Round(w*10) / 10}
 		j, _ := json.Marshal(wd)
 		weightDataSlice = append(weightDataSlice, wd)
-		fmt.Println(string(j))
+		_ = j
+		//fmt.Println(string(j))
 	}
 
 }
