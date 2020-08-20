@@ -20,4 +20,12 @@ Navigate to [https://dev.fitbit.com/apps/oauthinteractivetutorial](https://dev.f
 
 Enter the information from the fitbit app you created.
 
-Follow the guide, in step 3 you will be provided a OAuth 2.0 Access Token, this will give you the value of FITBIT_ACCESS_TOKEN=<TOKEN> which is used in this repository.
+Follow the guide, in step 3 you will be provided a OAuth 2.0 Access Token, this will give you the value of `FITBIT_ACCESS_TOKEN=<TOKEN>` which is used in this repository.
+
+# fitbit_import_weight
+
+Even without setting `FITBIT_ACCESS_TOKEN`, you can use `fitbit_import_weight.sh` as follows:
+
+```
+FITBIT_ACCESS_TOKE=<TOKEN> ./fitbit_import_weight <date in yyyy-mm-dd format> <weight in pounds>
+```

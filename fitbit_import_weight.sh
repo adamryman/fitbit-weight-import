@@ -7,8 +7,11 @@ set -e
 [[ -z $DEBUG ]] || set -x
 
 # .env provides $FITBIT_ACCESS_TOKEN
-source .env
+if [[ -z $FITBIT_ACCESS_TOKEN ]]; then
+	source .env;
+fi
 
+# Note, fitbit has a super tiny API rate limit of 150 per hour, be prepared to run this every hour if you have a lot of data to import
 # Note, this will upload in KG unless you use en_US
 curl -i \
   --header 'Content-Type: application/json' \
