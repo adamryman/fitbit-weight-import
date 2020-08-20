@@ -9,4 +9,20 @@ set -e
 # .env provides $FITBIT_ACCESS_TOKEN
 source .env
 
-curl -i -H "Authorization: Bearer $FITBIT_ACCESS_TOKEN"   https://api.fitbit.com/1/user/-/profile.json
+# Note, this will upload in KG unless you use en_US
+curl -i \
+  --header 'Content-Type: application/json' \
+  --header "Authorization: Bearer $FITBIT_ACCESS_TOKEN" \
+  --header "Accept-Language: en_US" \
+  --header "Accept-Locale: en_US" \
+  --request POST \
+  --data '' \
+  "https://api.fitbit.com/1/user/-/body/log/weight.json?weight=$2&date=$1"
+
+#curl -i \
+  #--header 'Content-Type: application/json' \
+  #--header "Authorization: Bearer $FITBIT_ACCESS_TOKEN" \
+  #--request DELETE \
+  #--data '' \
+  #"https://api.fitbit.com/1/user/-/body/log/weight/1386892799000.json"
+
